@@ -18,7 +18,7 @@ var testInputs = []testInput{
 	{
 		Clear:   "test",
 		Base64:  "dGVzdA==",
-		Variant: sodium_base64_VARIANT_URLSAFE,
+		Variant: SODIUM_BASE64_VARIANT_URLSAFE,
 	},
 	{
 		Clear: string(licenceContent),
@@ -37,7 +37,7 @@ var testInputs = []testInput{
 			"WSBDTEFJTSwgREFNQUdFUyBPUiBPVEhFUgpMSUFCSUxJVFksIFdIRVRIRVIgSU4gQU4gQUNUSU9OIE9GIENPTlRSQUNULCBUT1JUI" +
 			"E9SIE9USEVSV0lTRSwgQVJJU0lORyBGUk9NLApPVVQgT0YgT1IgSU4gQ09OTkVDVElPTiBXSVRIIFRIRSBTT0ZUV0FSRSBPUiBUSE" +
 			"UgVVNFIE9SIE9USEVSIERFQUxJTkdTIElOIFRIRQpTT0ZUV0FSRS4K",
-		Variant: sodium_base64_VARIANT_URLSAFE,
+		Variant: SODIUM_BASE64_VARIANT_URLSAFE,
 	},
 }
 
@@ -73,7 +73,7 @@ func TestBase64EncodedLen(t *testing.T) {
 		binLen = uint32(r.Intn(100))
 		b64LenExpected = (binLen+2)/3*4 + 1
 
-		b64LenActual = Base64EncodedLen(binLen, sodium_base64_VARIANT_URLSAFE)
+		b64LenActual = Base64EncodedLen(binLen, SODIUM_BASE64_VARIANT_URLSAFE)
 		if b64LenExpected != b64LenActual {
 			t.Fatalf("expected len is %d, given: %d", b64LenExpected, b64LenActual)
 		}
