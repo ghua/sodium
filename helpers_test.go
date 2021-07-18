@@ -1,6 +1,7 @@
 package sodium
 
 import (
+	"encoding/hex"
 	"io/ioutil"
 	"math/rand"
 	"testing"
@@ -42,12 +43,15 @@ var testInputs = []testInput{
 }
 
 func TestBase642Bin(t *testing.T) {
-	var binActual string
+	var binActual []byte
 
 	for _, v := range testInputs {
-		Base642bin(v.Base64, &binActual, v.Variant)
-		if binActual != v.Clear {
-			t.Fatalf("expected string %s, given: %s", v.Clear, binActual)
+		err := Base642bin(v.Base64, &binActual, v.Variant)
+		if nil != err {
+			t.Fatalf(err.Error())
+		}
+		if string(binActual) != v.Clear {
+			t.Fatalf("expected string \"%s\", given: \"%s\"", hex.EncodeToString([]byte(v.Clear)), hex.EncodeToString(binActual))
 		}
 	}
 }
@@ -56,9 +60,9 @@ func TestBin2base64(t *testing.T) {
 	var b64Actual string
 
 	for _, v := range testInputs {
-		Bin2base64(v.Clear, &b64Actual, v.Variant)
+		Bin2base64([]byte(v.Clear), &b64Actual, v.Variant)
 		if b64Actual != v.Base64 {
-			t.Fatalf("expected base64 %s, given: %s", v.Base64, b64Actual)
+			t.Fatalf("expected base64 \"%s\", given: \"%s\"", v.Base64, b64Actual)
 		}
 	}
 }
