@@ -20,13 +20,18 @@ const (
 var (
 	ErrParsingCanNotBeFinished = errors.New("more than bin_maxlen bytes would be required to store the parsed string, " +
 		"or if the string couldn't be fully parsed, but a valid pointer for b64_end was not provided")
+	_ = SODIUM_BASE64_VARIANT_ORIGINAL
+	_ = SODIUM_BASE64_VARIANT_ORIGINAL_NO_PADDING
+	_ = SODIUM_BASE64_VARIANT_URLSAFE
+	_ = SODIUM_BASE64_VARIANT_URLSAFE_NO_PADDING
 )
 
 func Base64EncodedLen(binLen uint32, variant int) uint32 {
 	return uint32(C.sodium_base64_encoded_len(C.ulong(binLen), C.int(variant)))
 }
 
-func Bin2base64(binString []byte, b64String *string, variant int) int {
+func Bin2base64(binString []byte, variant int) (string, int) {
+	var b64String string
 	bin := C.CBytes(binString)
 	binLength := len(binString)
 	b64MaxLength := C.size_t(Base64EncodedLen(uint32(binLength), variant))
@@ -39,12 +44,13 @@ func Bin2base64(binString []byte, b64String *string, variant int) int {
 	//)
 	r := C.sodium_bin2base64(&b64, b64MaxLength, (*C.uchar)(unsafe.Pointer(bin)), C.size_t(binLength), C.int(variant))
 
-	*b64String = C.GoString(&b64)
+	b64String = C.GoString(&b64)
 
-	return int(*r)
+	return b64String, int(*r)
 }
 
-func Base642bin(b64 string, binString *[]byte, variant int) error {
+func Base642bin(b64 string, variant int) ([]byte, error) {
+	var binString []byte
 	var b64Length = len(b64)
 	var binMaxLength = b64Length/4*3 + 10
 	var binRealLength C.ulong
@@ -62,10 +68,10 @@ func Base642bin(b64 string, binString *[]byte, variant int) error {
 		b64C, C.ulong(b64Length),
 		nil, &binRealLength, nil, C.int(variant)))
 	if -1 == r {
-		return ErrParsingCanNotBeFinished
+		return nil, ErrParsingCanNotBeFinished
 	}
 
-	*binString = C.GoBytes(unsafe.Pointer(&bin), C.int(binRealLength))
+	binString = C.GoBytes(unsafe.Pointer(&bin), C.int(binRealLength))
 
-	return nil
+	return binString, nil
 }

@@ -43,10 +43,10 @@ var testInputs = []testInput{
 }
 
 func TestBase642Bin(t *testing.T) {
-	var binActual []byte
+	//var binActual []byte
 
 	for _, v := range testInputs {
-		err := Base642bin(v.Base64, &binActual, v.Variant)
+		binActual, err := Base642bin(v.Base64, v.Variant)
 		if nil != err {
 			t.Fatalf(err.Error())
 		}
@@ -57,10 +57,8 @@ func TestBase642Bin(t *testing.T) {
 }
 
 func TestBin2base64(t *testing.T) {
-	var b64Actual string
-
 	for _, v := range testInputs {
-		Bin2base64([]byte(v.Clear), &b64Actual, v.Variant)
+		b64Actual, _ := Bin2base64([]byte(v.Clear), v.Variant)
 		if b64Actual != v.Base64 {
 			t.Fatalf("expected base64 \"%s\", given: \"%s\"", v.Base64, b64Actual)
 		}
